@@ -1,0 +1,580 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>COA – Talhões 3D | Usina Coruripe</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"/>
+<link href="https://fonts.googleapis.com/css2?family=Rajdhani:wght@400;500;600;700&family=Inter:wght@300;400;500&display=swap" rel="stylesheet"/>
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"/>
+<style>
+  :root {
+    --bg:        #050d0a;
+    --panel:     #0a1a13;
+    --border:    #0f3022;
+    --green1:    #00ff88;
+    --green2:    #00c96a;
+    --green3:    #007a40;
+    --yellow:    #ffe066;
+    --red:       #ff4d4d;
+    --orange:    #ff9933;
+    --text:      #c8ffe0;
+    --muted:     #4a7a62;
+    --font-head: 'Rajdhani', sans-serif;
+    --font-body: 'Inter', sans-serif;
+  }
+  * { margin:0; padding:0; box-sizing:border-box; }
+  html, body { width:100%; height:100%; background:var(--bg); color:var(--text); font-family:var(--font-body); overflow:hidden; }
+
+  /* ── LAYOUT ── */
+  #app { display:grid; grid-template-columns:1fr 340px; grid-template-rows:56px 1fr 180px; height:100vh; gap:0; }
+
+  /* ── HEADER ── */
+  #header {
+    grid-column: 1 / -1;
+    display:flex; align-items:center; justify-content:space-between;
+    padding: 0 24px;
+    background: var(--panel);
+    border-bottom: 1px solid var(--border);
+  }
+  .logo { display:flex; align-items:center; gap:12px; }
+  .logo-icon { width:32px; height:32px; }
+  .logo-text { font-family:var(--font-head); font-size:20px; font-weight:700; color:var(--green1); letter-spacing:2px; }
+  .logo-sub  { font-size:11px; color:var(--muted); letter-spacing:1px; text-transform:uppercase; }
+  .header-right { display:flex; align-items:center; gap:24px; }
+  .badge {
+    font-family:var(--font-head); font-size:12px; font-weight:600;
+    padding:4px 10px; border-radius:20px; letter-spacing:1px;
+  }
+  .badge-live  { background:#003322; color:var(--green1); border:1px solid var(--green3); animation: pulse-badge 2s infinite; }
+  .badge-safra { background:#1a1000; color:var(--yellow); border:1px solid #664400; }
+  @keyframes pulse-badge { 0%,100%{opacity:1} 50%{opacity:.5} }
+  .clock { font-family:var(--font-head); font-size:16px; color:var(--muted); letter-spacing:2px; }
+
+  /* ── THREE.JS CANVAS ── */
+  #canvas-wrap {
+    position:relative; overflow:hidden;
+    border-right:1px solid var(--border);
+  }
+  #threejs-canvas { display:block; width:100%; height:100%; }
+  .canvas-label {
+    position:absolute; top:16px; left:16px;
+    font-family:var(--font-head); font-size:13px; font-weight:600;
+    color:var(--muted); letter-spacing:2px; text-transform:uppercase;
+    pointer-events:none;
+  }
+  .canvas-hint {
+    position:absolute; bottom:16px; left:16px;
+    font-size:11px; color:var(--muted); letter-spacing:1px;
+    pointer-events:none;
+  }
+
+  /* tooltip */
+  #tooltip {
+    position:absolute; display:none;
+    background:rgba(5,20,12,.95); border:1px solid var(--green3);
+    border-radius:8px; padding:12px 16px; pointer-events:none;
+    font-family:var(--font-body); font-size:12px; min-width:180px;
+    box-shadow:0 0 20px rgba(0,255,136,.1);
+  }
+  #tooltip .tt-title { font-family:var(--font-head); font-size:16px; font-weight:700; color:var(--green1); margin-bottom:8px; }
+  #tooltip .tt-row   { display:flex; justify-content:space-between; gap:16px; margin-bottom:4px; color:var(--muted); }
+  #tooltip .tt-row span:last-child { color:var(--text); font-weight:500; }
+
+  /* ── SIDEBAR ── */
+  #sidebar {
+    display:flex; flex-direction:column; gap:0;
+    overflow-y:auto; border-left:1px solid var(--border);
+  }
+  #sidebar::-webkit-scrollbar { width:4px; }
+  #sidebar::-webkit-scrollbar-thumb { background:var(--border); border-radius:2px; }
+
+  .side-section { padding:16px; border-bottom:1px solid var(--border); }
+  .side-title {
+    font-family:var(--font-head); font-size:11px; font-weight:700;
+    color:var(--muted); letter-spacing:2px; text-transform:uppercase; margin-bottom:12px;
+  }
+
+  /* mapa leaflet */
+  #map { height:180px; border-radius:6px; overflow:hidden; border:1px solid var(--border); }
+
+  /* KPI cards */
+  .kpi-grid { display:grid; grid-template-columns:1fr 1fr; gap:8px; }
+  .kpi-card {
+    background:#0d1f17; border:1px solid var(--border); border-radius:6px;
+    padding:10px 12px;
+  }
+  .kpi-label { font-size:10px; color:var(--muted); letter-spacing:1px; text-transform:uppercase; margin-bottom:4px; }
+  .kpi-value { font-family:var(--font-head); font-size:22px; font-weight:700; line-height:1; }
+  .kpi-unit  { font-size:10px; color:var(--muted); margin-top:2px; }
+  .kv-green  { color:var(--green1); }
+  .kv-yellow { color:var(--yellow); }
+  .kv-red    { color:var(--red); }
+  .kv-orange { color:var(--orange); }
+
+  /* legend */
+  .legend { display:flex; flex-direction:column; gap:6px; }
+  .legend-row { display:flex; align-items:center; gap:8px; font-size:11px; color:var(--muted); }
+  .legend-dot { width:10px; height:10px; border-radius:2px; flex-shrink:0; }
+
+  /* talhão list */
+  .talhao-list { display:flex; flex-direction:column; gap:6px; }
+  .talhao-item {
+    background:#0d1f17; border:1px solid var(--border); border-radius:5px;
+    padding:8px 10px; display:flex; align-items:center; gap:10px;
+    cursor:pointer; transition:border-color .2s;
+  }
+  .talhao-item:hover { border-color:var(--green3); }
+  .talhao-bar-wrap { flex:1; height:4px; background:#0a1a13; border-radius:2px; }
+  .talhao-bar { height:4px; border-radius:2px; }
+  .talhao-name { font-family:var(--font-head); font-size:13px; font-weight:600; color:var(--text); min-width:38px; }
+  .talhao-tch  { font-size:11px; color:var(--muted); min-width:52px; text-align:right; }
+
+  /* ── BOTTOM BAR ── */
+  #bottom {
+    grid-column: 1 / -1;
+    display:flex; align-items:stretch; gap:0;
+    border-top:1px solid var(--border);
+    background:var(--panel);
+    overflow:hidden;
+  }
+  .stat-block {
+    flex:1; display:flex; flex-direction:column; justify-content:center;
+    padding:0 20px; border-right:1px solid var(--border);
+  }
+  .stat-block:last-child { border-right:none; }
+  .stat-label { font-size:10px; color:var(--muted); letter-spacing:1.5px; text-transform:uppercase; margin-bottom:4px; }
+  .stat-value { font-family:var(--font-head); font-size:26px; font-weight:700; }
+  .stat-sub   { font-size:10px; color:var(--muted); margin-top:2px; }
+  .sv-green  { color:var(--green1); }
+  .sv-yellow { color:var(--yellow); }
+  .sv-orange { color:var(--orange); }
+  .sv-red    { color:var(--red); }
+
+  /* progress bar inline */
+  .prog-wrap { display:flex; align-items:center; gap:8px; margin-top:6px; }
+  .prog-bg   { flex:1; height:3px; background:var(--border); border-radius:2px; }
+  .prog-fill { height:3px; border-radius:2px; background:var(--green1); }
+  .prog-pct  { font-size:10px; color:var(--green1); min-width:28px; }
+</style>
+</head>
+<body>
+<div id="app">
+
+  <!-- HEADER -->
+  <header id="header">
+    <div class="logo">
+      <svg class="logo-icon" viewBox="0 0 32 32" fill="none">
+        <polygon points="16,2 30,26 2,26" stroke="#00ff88" stroke-width="2" fill="none"/>
+        <line x1="16" y1="10" x2="16" y2="22" stroke="#00ff88" stroke-width="1.5"/>
+        <line x1="10" y1="22" x2="22" y2="22" stroke="#00ff88" stroke-width="1.5"/>
+      </svg>
+      <div>
+        <div class="logo-text">COA DASHBOARD</div>
+        <div class="logo-sub">Controle Operacional Agrícola · Usina Coruripe</div>
+      </div>
+    </div>
+    <div class="header-right">
+      <span class="badge badge-safra">🌾 SAFRA 2025/2026</span>
+      <span class="badge badge-live">● AO VIVO</span>
+      <span class="clock" id="clock">--:--:--</span>
+    </div>
+  </header>
+
+  <!-- CANVAS THREE.JS -->
+  <div id="canvas-wrap">
+    <canvas id="threejs-canvas"></canvas>
+    <div class="canvas-label">▸ VISUALIZAÇÃO 3D DE TALHÕES · TCH / ATR</div>
+    <div class="canvas-hint">🖱 Arraste para rotacionar · Scroll para zoom</div>
+    <div id="tooltip">
+      <div class="tt-title" id="tt-name">—</div>
+      <div class="tt-row"><span>Variedade</span><span id="tt-var">—</span></div>
+      <div class="tt-row"><span>TCH</span><span id="tt-tch">—</span></div>
+      <div class="tt-row"><span>ATR</span><span id="tt-atr">—</span></div>
+      <div class="tt-row"><span>Área (ha)</span><span id="tt-area">—</span></div>
+      <div class="tt-row"><span>Corte</span><span id="tt-corte">—</span></div>
+      <div class="tt-row"><span>Status</span><span id="tt-status">—</span></div>
+    </div>
+  </div>
+
+  <!-- SIDEBAR -->
+  <aside id="sidebar">
+
+    <div class="side-section">
+      <div class="side-title">📍 Localização · Iturama / MG</div>
+      <div id="map"></div>
+    </div>
+
+    <div class="side-section">
+      <div class="side-title">📊 KPIs da Safra</div>
+      <div class="kpi-grid">
+        <div class="kpi-card">
+          <div class="kpi-label">TCH Médio</div>
+          <div class="kpi-value kv-green">87,4</div>
+          <div class="kpi-unit">ton/ha</div>
+        </div>
+        <div class="kpi-card">
+          <div class="kpi-label">ATR Médio</div>
+          <div class="kpi-value kv-yellow">142,8</div>
+          <div class="kpi-unit">kg/ton</div>
+        </div>
+        <div class="kpi-card">
+          <div class="kpi-label">Área Total</div>
+          <div class="kpi-value kv-green">1.240</div>
+          <div class="kpi-unit">hectares</div>
+        </div>
+        <div class="kpi-card">
+          <div class="kpi-label">Colhidos</div>
+          <div class="kpi-value kv-orange">38%</div>
+          <div class="kpi-unit">da área total</div>
+        </div>
+        <div class="kpi-card">
+          <div class="kpi-label">Talhões OK</div>
+          <div class="kpi-value kv-green">14</div>
+          <div class="kpi-unit">de 20 total</div>
+        </div>
+        <div class="kpi-card">
+          <div class="kpi-label">Em Alerta</div>
+          <div class="kpi-value kv-red">3</div>
+          <div class="kpi-unit">talhões</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="side-section">
+      <div class="side-title">🎨 Legenda TCH</div>
+      <div class="legend">
+        <div class="legend-row"><div class="legend-dot" style="background:#00ff88"></div> Excelente → ≥ 95 ton/ha</div>
+        <div class="legend-row"><div class="legend-dot" style="background:#aaff44"></div> Bom → 80–94 ton/ha</div>
+        <div class="legend-row"><div class="legend-dot" style="background:#ffe066"></div> Regular → 65–79 ton/ha</div>
+        <div class="legend-row"><div class="legend-dot" style="background:#ff9933"></div> Abaixo → 50–64 ton/ha</div>
+        <div class="legend-row"><div class="legend-dot" style="background:#ff4d4d"></div> Crítico → &lt; 50 ton/ha</div>
+        <div class="legend-row"><div class="legend-dot" style="background:#334433"></div> Já colhido</div>
+      </div>
+    </div>
+
+    <div class="side-section">
+      <div class="side-title">🌱 Talhões por TCH</div>
+      <div class="talhao-list" id="talhao-list"></div>
+    </div>
+
+  </aside>
+
+  <!-- BOTTOM BAR -->
+  <div id="bottom">
+    <div class="stat-block">
+      <div class="stat-label">Cana Prevista (safra)</div>
+      <div class="stat-value sv-green">108.360 <span style="font-size:14px">ton</span></div>
+      <div class="stat-sub">Meta: 115.000 ton</div>
+      <div class="prog-wrap">
+        <div class="prog-bg"><div class="prog-fill" style="width:94%"></div></div>
+        <div class="prog-pct">94%</div>
+      </div>
+    </div>
+    <div class="stat-block">
+      <div class="stat-label">Produção Acumulada</div>
+      <div class="stat-value sv-yellow">41.177 <span style="font-size:14px">ton</span></div>
+      <div class="stat-sub">38% da meta da safra</div>
+      <div class="prog-wrap">
+        <div class="prog-bg"><div class="prog-fill" style="width:38%;background:var(--yellow)"></div></div>
+        <div class="prog-pct" style="color:var(--yellow)">38%</div>
+      </div>
+    </div>
+    <div class="stat-block">
+      <div class="stat-label">Moagem Hoje</div>
+      <div class="stat-value sv-green">6.240 <span style="font-size:14px">ton</span></div>
+      <div class="stat-sub">Meta diária: 6.500 ton</div>
+      <div class="prog-wrap">
+        <div class="prog-bg"><div class="prog-fill" style="width:96%"></div></div>
+        <div class="prog-pct">96%</div>
+      </div>
+    </div>
+    <div class="stat-block">
+      <div class="stat-label">ATR Total Safra</div>
+      <div class="stat-value sv-yellow">5.879 <span style="font-size:14px">kg/ha</span></div>
+      <div class="stat-sub">TCH × ATR médio</div>
+    </div>
+    <div class="stat-block">
+      <div class="stat-label">Talhões Críticos</div>
+      <div class="stat-value sv-red">3</div>
+      <div class="stat-sub">TCH abaixo de 50 ton/ha</div>
+    </div>
+    <div class="stat-block">
+      <div class="stat-label">Dias Restantes</div>
+      <div class="stat-value sv-orange">47</div>
+      <div class="stat-sub">Previsão: 30/07/2026</div>
+    </div>
+  </div>
+
+</div><!-- /app -->
+
+<!-- SCRIPTS -->
+<script src="https://unpkg.com/three@0.128.0/build/three.min.js"></script>
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+<script>
+// ─── CLOCK ───────────────────────────────────────────────────────────────────
+function updateClock(){
+  const now = new Date();
+  document.getElementById('clock').textContent =
+    now.toLocaleTimeString('pt-BR',{hour:'2-digit',minute:'2-digit',second:'2-digit'});
+}
+setInterval(updateClock,1000); updateClock();
+
+// ─── TALHÕES DATA ─────────────────────────────────────────────────────────────
+const TALHOES = [
+  {id:'T-01', var:'RB867515', tch:102, atr:148, area:68, corte:'2°', status:'Disponível',  col:false},
+  {id:'T-02', var:'CTC9001',  tch:94,  atr:144, area:55, corte:'1°', status:'Disponível',  col:false},
+  {id:'T-03', var:'RB92579',  tch:88,  atr:141, area:72, corte:'3°', status:'Disponível',  col:false},
+  {id:'T-04', var:'SP813250', tch:76,  atr:138, area:48, corte:'2°', status:'Disponível',  col:false},
+  {id:'T-05', var:'RB867515', tch:45,  atr:128, area:39, corte:'4°', status:'⚠ Crítico',   col:false},
+  {id:'T-06', var:'CTC9001',  tch:98,  atr:150, area:81, corte:'1°', status:'Disponível',  col:false},
+  {id:'T-07', var:'RB92579',  tch:61,  atr:133, area:44, corte:'3°', status:'Atenção',     col:false},
+  {id:'T-08', var:'SP813250', tch:108, atr:152, area:90, corte:'2°', status:'Disponível',  col:false},
+  {id:'T-09', var:'RB867515', tch:83,  atr:140, area:62, corte:'1°', status:'Disponível',  col:false},
+  {id:'T-10', var:'CTC9001',  tch:42,  atr:125, area:35, corte:'5°', status:'⚠ Crítico',   col:false},
+  {id:'T-11', var:'RB92579',  tch:91,  atr:143, area:77, corte:'2°', status:'Disponível',  col:false},
+  {id:'T-12', var:'SP813250', tch:69,  atr:136, area:53, corte:'3°', status:'Atenção',     col:false},
+  {id:'T-13', var:'RB867515', tch:115, atr:156, area:95, corte:'1°', status:'Disponível',  col:false},
+  {id:'T-14', var:'CTC9001',  tch:78,  atr:139, area:60, corte:'2°', status:'Disponível',  col:false},
+  {id:'T-15', var:'RB92579',  tch:48,  atr:127, area:42, corte:'4°', status:'⚠ Crítico',   col:false},
+  {id:'T-16', var:'SP813250', tch:96,  atr:147, area:70, corte:'1°', status:'Colhido',     col:true },
+  {id:'T-17', var:'RB867515', tch:88,  atr:142, area:58, corte:'2°', status:'Colhido',     col:true },
+  {id:'T-18', var:'CTC9001',  tch:104, atr:149, area:83, corte:'1°', status:'Colhido',     col:true },
+  {id:'T-19', var:'RB92579',  tch:72,  atr:137, area:47, corte:'3°', status:'Colhido',     col:true },
+  {id:'T-20', var:'SP813250', tch:93,  atr:145, area:65, corte:'2°', status:'Colhido',     col:true },
+];
+
+function tchColor(tch, colhido){
+  if(colhido) return 0x1a3322;
+  if(tch >= 95) return 0x00ff88;
+  if(tch >= 80) return 0xaaff44;
+  if(tch >= 65) return 0xffe066;
+  if(tch >= 50) return 0xff9933;
+  return 0xff4d4d;
+}
+function tchHeight(tch){ return Math.max(0.1, (tch / 115) * 3.5); }
+
+// ─── TALHÃO LIST SIDEBAR ──────────────────────────────────────────────────────
+const listEl = document.getElementById('talhao-list');
+const sorted = [...TALHOES].sort((a,b)=>b.tch-a.tch);
+sorted.forEach(t=>{
+  const col = t.col ? '#334433' : (t.tch>=95?'#00ff88':t.tch>=80?'#aaff44':t.tch>=65?'#ffe066':t.tch>=50?'#ff9933':'#ff4d4d');
+  const pct = Math.round((t.tch/115)*100);
+  listEl.innerHTML += `
+    <div class="talhao-item">
+      <span class="talhao-name">${t.id}</span>
+      <div class="talhao-bar-wrap"><div class="talhao-bar" style="width:${pct}%;background:${col}"></div></div>
+      <span class="talhao-tch" style="color:${col}">${t.tch} t/ha</span>
+    </div>`;
+});
+
+// ─── THREE.JS ────────────────────────────────────────────────────────────────
+const canvas = document.getElementById('threejs-canvas');
+const wrap   = document.getElementById('canvas-wrap');
+
+const renderer = new THREE.WebGLRenderer({canvas, antialias:true, alpha:true});
+renderer.setClearColor(0x050d0a, 1);
+renderer.setPixelRatio(window.devicePixelRatio);
+
+const scene  = new THREE.Scene();
+const camera = new THREE.PerspectiveCamera(45, 1, 0.1, 1000);
+camera.position.set(0, 14, 18);
+camera.lookAt(0, 0, 0);
+
+// Fog
+scene.fog = new THREE.Fog(0x050d0a, 30, 60);
+
+// Lights
+scene.add(new THREE.AmbientLight(0x002211, 1.5));
+const dirLight = new THREE.DirectionalLight(0x00ff88, 0.6);
+dirLight.position.set(10, 20, 10);
+scene.add(dirLight);
+const dirLight2 = new THREE.DirectionalLight(0xffffff, 0.3);
+dirLight2.position.set(-10, 10, -10);
+scene.add(dirLight2);
+
+// Grid base
+const gridHelper = new THREE.GridHelper(30, 20, 0x0f3022, 0x0a1a13);
+scene.add(gridHelper);
+
+// Ground plane
+const groundGeo = new THREE.PlaneGeometry(30,30);
+const groundMat = new THREE.MeshStandardMaterial({color:0x040c09, roughness:1});
+const ground = new THREE.Mesh(groundGeo, groundMat);
+ground.rotation.x = -Math.PI/2;
+ground.position.y = -0.01;
+scene.add(ground);
+
+// Build talhão blocks
+const cols = 5, rows = 4;
+const gap  = 0.3;
+const bw   = (30 - gap*(cols+1)) / cols;
+const bd   = (22 - gap*(rows+1)) / rows;
+const meshes = [];
+
+TALHOES.forEach((t, i) => {
+  const col = i % cols;
+  const row = Math.floor(i / cols);
+  const h   = tchHeight(t.tch);
+  const geo = new THREE.BoxGeometry(bw, h, bd);
+  const mat = new THREE.MeshStandardMaterial({
+    color: tchColor(t.tch, t.col),
+    roughness: 0.6,
+    metalness: 0.1,
+    transparent: t.col,
+    opacity: t.col ? 0.35 : 1,
+    emissive: t.col ? 0x000000 : new THREE.Color(tchColor(t.tch, false)).multiplyScalar(0.08)
+  });
+  const mesh = new THREE.Mesh(geo, mat);
+  const x = -15 + gap + col*(bw+gap) + bw/2;
+  const z = -11 + gap + row*(bd+gap) + bd/2;
+  mesh.position.set(x, h/2, z);
+  mesh.userData = t;
+  scene.add(mesh);
+  meshes.push(mesh);
+
+  // Label above block (id)
+  // we'll use canvas texture for labels
+  const labelCanvas = document.createElement('canvas');
+  labelCanvas.width = 128; labelCanvas.height = 48;
+  const ctx = labelCanvas.getContext('2d');
+  ctx.fillStyle = 'rgba(0,0,0,0)';
+  ctx.fillRect(0,0,128,48);
+  ctx.font = 'bold 22px Rajdhani, sans-serif';
+  ctx.fillStyle = t.col ? '#334433' : '#c8ffe0';
+  ctx.textAlign = 'center';
+  ctx.fillText(t.id, 64, 32);
+  const tex = new THREE.CanvasTexture(labelCanvas);
+  const labelGeo = new THREE.PlaneGeometry(bw*0.8, bd*0.3);
+  const labelMat = new THREE.MeshBasicMaterial({map:tex, transparent:true, depthWrite:false});
+  const label = new THREE.Mesh(labelGeo, labelMat);
+  label.rotation.x = -Math.PI/2;
+  label.position.set(x, h + 0.05, z);
+  scene.add(label);
+});
+
+// ─── ORBIT CONTROLS (manual) ──────────────────────────────────────────────────
+let isDragging = false, lastX = 0, lastY = 0;
+let theta = 0.3, phi = 0.9, radius = 22;
+const target = new THREE.Vector3(0, 0, 0);
+
+function updateCamera(){
+  camera.position.x = target.x + radius * Math.sin(phi) * Math.sin(theta);
+  camera.position.y = target.y + radius * Math.cos(phi);
+  camera.position.z = target.z + radius * Math.sin(phi) * Math.cos(theta);
+  camera.lookAt(target);
+}
+updateCamera();
+
+canvas.addEventListener('mousedown', e=>{ isDragging=true; lastX=e.clientX; lastY=e.clientY; });
+window.addEventListener('mouseup', ()=>{ isDragging=false; });
+window.addEventListener('mousemove', e=>{
+  if(!isDragging) return;
+  const dx = e.clientX - lastX, dy = e.clientY - lastY;
+  theta -= dx * 0.005;
+  phi   = Math.max(0.2, Math.min(1.4, phi + dy*0.005));
+  lastX = e.clientX; lastY = e.clientY;
+  updateCamera();
+});
+canvas.addEventListener('wheel', e=>{
+  radius = Math.max(8, Math.min(35, radius + e.deltaY*0.03));
+  updateCamera(); e.preventDefault();
+}, {passive:false});
+
+// ─── RAYCASTER / TOOLTIP ──────────────────────────────────────────────────────
+const raycaster = new THREE.Raycaster();
+const mouse     = new THREE.Vector2();
+const tooltip   = document.getElementById('tooltip');
+let   hoveredMesh = null;
+
+canvas.addEventListener('mousemove', e=>{
+  const rect = canvas.getBoundingClientRect();
+  mouse.x = ((e.clientX - rect.left) / rect.width)  * 2 - 1;
+  mouse.y = -((e.clientY - rect.top) / rect.height) * 2 + 1;
+  raycaster.setFromCamera(mouse, camera);
+  const hits = raycaster.intersectObjects(meshes);
+  if(hits.length > 0){
+    const m = hits[0].object;
+    if(m !== hoveredMesh){
+      if(hoveredMesh) hoveredMesh.material.emissiveIntensity = 0;
+      hoveredMesh = m;
+      if(!m.userData.col) m.material.emissive = new THREE.Color(tchColor(m.userData.tch,false));
+      m.material.emissiveIntensity = 0.4;
+    }
+    const t = m.userData;
+    document.getElementById('tt-name').textContent   = t.id + ' — ' + t.var;
+    document.getElementById('tt-tch').textContent    = t.tch + ' ton/ha';
+    document.getElementById('tt-atr').textContent    = t.atr + ' kg/ton';
+    document.getElementById('tt-area').textContent   = t.area + ' ha';
+    document.getElementById('tt-corte').textContent  = t.corte + ' corte';
+    document.getElementById('tt-status').textContent = t.status;
+    tooltip.style.display = 'block';
+    tooltip.style.left    = (e.clientX - rect.left + 16) + 'px';
+    tooltip.style.top     = (e.clientY - rect.top  - 30) + 'px';
+  } else {
+    if(hoveredMesh){ hoveredMesh.material.emissiveIntensity=0; hoveredMesh=null; }
+    tooltip.style.display = 'none';
+  }
+});
+canvas.addEventListener('mouseleave', ()=>{ tooltip.style.display='none'; });
+
+// ─── RESIZE ───────────────────────────────────────────────────────────────────
+function resize(){
+  const w = wrap.clientWidth, h = wrap.clientHeight;
+  renderer.setSize(w, h);
+  camera.aspect = w/h;
+  camera.updateProjectionMatrix();
+}
+resize();
+window.addEventListener('resize', resize);
+
+// ─── ANIMATE ──────────────────────────────────────────────────────────────────
+function animate(){
+  requestAnimationFrame(animate);
+  renderer.render(scene, camera);
+}
+animate();
+
+// ─── LEAFLET MAP ──────────────────────────────────────────────────────────────
+const map = L.map('map', {zoomControl:false, attributionControl:false}).setView([-19.73, -50.19], 12);
+L.tileLayer('https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png',{
+  maxZoom:19, subdomains:'abcd'
+}).addTo(map);
+
+// Marcador usina
+const icon = L.divIcon({
+  html:`<div style="background:#00ff88;width:12px;height:12px;border-radius:50%;border:2px solid #050d0a;box-shadow:0 0 8px #00ff88"></div>`,
+  iconSize:[12,12], iconAnchor:[6,6], className:''
+});
+L.marker([-19.73,-50.19],{icon}).addTo(map)
+ .bindPopup('<b style="color:#00ff88">Usina Coruripe</b><br>Polo Iturama/MG').openPopup();
+
+// Talhões aproximados no mapa (polígonos fake ao redor da usina)
+const colors = ['#00ff88','#aaff44','#ffe066','#ff9933','#ff4d4d','#334433'];
+function tchToMapColor(tch,col){
+  if(col) return '#334433';
+  if(tch>=95) return '#00ff88';
+  if(tch>=80) return '#aaff44';
+  if(tch>=65) return '#ffe066';
+  if(tch>=50) return '#ff9933';
+  return '#ff4d4d';
+}
+TALHOES.forEach((t,i)=>{
+  const c = i % 5, r = Math.floor(i/5);
+  const lat0 = -19.710 + r*0.008;
+  const lng0 = -50.230 + c*0.012;
+  const poly = [
+    [lat0,      lng0],
+    [lat0+0.006,lng0],
+    [lat0+0.006,lng0+0.010],
+    [lat0,      lng0+0.010],
+  ];
+  L.polygon(poly,{
+    color: tchToMapColor(t.tch,t.col),
+    fillColor: tchToMapColor(t.tch,t.col),
+    fillOpacity:0.35, weight:1
+  }).addTo(map).bindTooltip(`<b>${t.id}</b><br>TCH: ${t.tch}`,{sticky:true});
+});
+</script>
+</body>
+</html>
