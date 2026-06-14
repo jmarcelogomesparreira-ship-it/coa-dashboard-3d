@@ -196,7 +196,9 @@ html,body{width:100%;height:100%;background:var(--bg);color:var(--text);font-fam
 function tick(){document.getElementById('clock').textContent=new Date().toLocaleTimeString('pt-BR',{hour:'2-digit',minute:'2-digit',second:'2-digit'});}
 setInterval(tick,1000);tick();
 
-// ── FROTA ────────────────────────────────────────────────────────────────────
+const slbl={op:"Operando",mn:"Manutenção",qb:"Quebrado no campo"};
+
+// ── FROTA ──────────────────────────────────────────────────────────────────────
 const FROTA = [
   // COLHEDORAS
   {nome:'Colhedora', id:'COL-01', op:'José Alves',    status:'op',  hrs:'9,1h', obs:'Normal',             tipo:'col', qi:0},
@@ -552,7 +554,7 @@ function animate(){
 }
 animate();
 
-const slbl={op:'Operando',mn:'Manutenção',qb:'Quebrado no campo'};
+
 </script>
 </body>
 </html>
