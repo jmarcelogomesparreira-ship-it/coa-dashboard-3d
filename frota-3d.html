@@ -560,7 +560,7 @@ canvas.addEventListener('mouseleave',()=>tt.style.display='none');
 function moveMachine(m, dt){
   const d=m.userData;
   if(!d.speed||!d.path||d.path.length<2) return;
-  d.t = (d.t||0)+d.speed*dt*60;
+  d.t = (d.t||0)+d.speed;
   const total=d.path.length;
   const seg=Math.floor(d.t)%total;
   const frac=d.t%1;
