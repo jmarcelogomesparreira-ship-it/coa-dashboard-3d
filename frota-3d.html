@@ -4,139 +4,127 @@
 <meta charset="UTF-8"/>
 <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
 <title>COA – Frota Agrícola 3D</title>
-<link rel="preconnect" href="https://fonts.googleapis.com"/>
 <link href="https://fonts.googleapis.com/css2?family=Rajdhani:wght@400;500;600;700&family=Inter:wght@300;400;500&display=swap" rel="stylesheet"/>
 <style>
 :root {
-  --bg:      #050d0a;
-  --panel:   #0a1a13;
-  --border:  #0f3022;
-  --green1:  #00ff88;
-  --green2:  #00c96a;
-  --green3:  #007a40;
-  --yellow:  #ffe066;
-  --red:     #ff4d4d;
-  --orange:  #ff9933;
-  --blue:    #44aaff;
-  --text:    #c8ffe0;
-  --muted:   #4a7a62;
-  --fh:      'Rajdhani', sans-serif;
-  --fb:      'Inter', sans-serif;
+  --bg:     #050d0a;
+  --panel:  #0a1a13;
+  --border: #0f3022;
+  --g1:     #00ff88;
+  --g3:     #007a40;
+  --yel:    #ffe066;
+  --red:    #ff4d4d;
+  --ora:    #ff9933;
+  --blu:    #44aaff;
+  --text:   #c8ffe0;
+  --muted:  #4a7a62;
+  --fh:     'Rajdhani', sans-serif;
+  --fb:     'Inter', sans-serif;
 }
 *{margin:0;padding:0;box-sizing:border-box;}
 html,body{width:100%;height:100%;background:var(--bg);color:var(--text);font-family:var(--fb);overflow:hidden;}
-
-#app{display:grid;grid-template-columns:1fr 320px;grid-template-rows:56px 1fr 160px;height:100vh;}
+#app{display:grid;grid-template-columns:1fr 300px;grid-template-rows:56px 1fr 150px;height:100vh;}
 
 /* HEADER */
-#header{
-  grid-column:1/-1;display:flex;align-items:center;justify-content:space-between;
-  padding:0 24px;background:var(--panel);border-bottom:1px solid var(--border);
-}
-.logo-text{font-family:var(--fh);font-size:20px;font-weight:700;color:var(--green1);letter-spacing:2px;}
-.logo-sub{font-size:11px;color:var(--muted);letter-spacing:1px;text-transform:uppercase;}
-.hright{display:flex;align-items:center;gap:20px;}
-.badge{font-family:var(--fh);font-size:12px;font-weight:600;padding:4px 10px;border-radius:20px;letter-spacing:1px;}
-.badge-live{background:#003322;color:var(--green1);border:1px solid var(--green3);animation:pb 2s infinite;}
-.badge-frota{background:#0a1000;color:var(--yellow);border:1px solid #664400;}
+#hdr{grid-column:1/-1;display:flex;align-items:center;justify-content:space-between;padding:0 24px;background:var(--panel);border-bottom:1px solid var(--border);}
+.ltxt{font-family:var(--fh);font-size:20px;font-weight:700;color:var(--g1);letter-spacing:2px;}
+.lsub{font-size:11px;color:var(--muted);letter-spacing:1px;text-transform:uppercase;}
+.hr{display:flex;align-items:center;gap:18px;}
+.badge{font-family:var(--fh);font-size:11px;font-weight:600;padding:3px 9px;border-radius:20px;letter-spacing:1px;}
+.bl{background:#003322;color:var(--g1);border:1px solid var(--g3);animation:pb 2s infinite;}
+.bf{background:#0a1000;color:var(--yel);border:1px solid #664400;}
 @keyframes pb{0%,100%{opacity:1}50%{opacity:.4}}
-.clock{font-family:var(--fh);font-size:16px;color:var(--muted);letter-spacing:2px;}
+.clk{font-family:var(--fh);font-size:15px;color:var(--muted);letter-spacing:2px;}
 
 /* CANVAS */
 #cw{position:relative;overflow:hidden;border-right:1px solid var(--border);}
 #c{display:block;width:100%;height:100%;}
-.clabel{position:absolute;top:16px;left:16px;font-family:var(--fh);font-size:12px;font-weight:600;color:var(--muted);letter-spacing:2px;text-transform:uppercase;pointer-events:none;}
-.chint{position:absolute;bottom:16px;left:16px;font-size:11px;color:var(--muted);letter-spacing:1px;pointer-events:none;}
+.clb{position:absolute;top:14px;left:14px;font-family:var(--fh);font-size:11px;font-weight:600;color:var(--muted);letter-spacing:2px;text-transform:uppercase;pointer-events:none;}
+.chn{position:absolute;bottom:14px;left:14px;font-size:10px;color:var(--muted);pointer-events:none;}
 
 /* TOOLTIP */
-#tt{position:absolute;display:none;background:rgba(5,20,12,.96);border:1px solid var(--green3);border-radius:8px;padding:12px 16px;pointer-events:none;font-size:12px;min-width:190px;box-shadow:0 0 20px rgba(0,255,136,.12);}
-#tt .ttn{font-family:var(--fh);font-size:17px;font-weight:700;color:var(--green1);margin-bottom:8px;}
-#tt .ttr{display:flex;justify-content:space-between;gap:14px;margin-bottom:4px;color:var(--muted);}
-#tt .ttr span:last-child{color:var(--text);font-weight:500;}
+#tt{position:absolute;display:none;background:rgba(5,20,12,.97);border:1px solid var(--g3);border-radius:8px;padding:11px 14px;pointer-events:none;font-size:11px;min-width:180px;box-shadow:0 0 16px rgba(0,255,136,.1);}
+#tt .tn{font-family:var(--fh);font-size:16px;font-weight:700;color:var(--g1);margin-bottom:7px;}
+#tt .tr{display:flex;justify-content:space-between;gap:12px;margin-bottom:3px;color:var(--muted);}
+#tt .tr span:last-child{color:var(--text);font-weight:500;}
 
 /* SIDEBAR */
-#sb{display:flex;flex-direction:column;overflow-y:auto;border-left:1px solid var(--border);}
-#sb::-webkit-scrollbar{width:4px;}
+#sb{display:flex;flex-direction:column;overflow-y:auto;}
+#sb::-webkit-scrollbar{width:3px;}
 #sb::-webkit-scrollbar-thumb{background:var(--border);}
-.ss{padding:14px;border-bottom:1px solid var(--border);}
-.st{font-family:var(--fh);font-size:11px;font-weight:700;color:var(--muted);letter-spacing:2px;text-transform:uppercase;margin-bottom:10px;}
-
-/* KPI grid */
-.kg{display:grid;grid-template-columns:1fr 1fr;gap:7px;}
-.kc{background:#0d1f17;border:1px solid var(--border);border-radius:6px;padding:9px 11px;}
-.kl{font-size:10px;color:var(--muted);letter-spacing:1px;text-transform:uppercase;margin-bottom:3px;}
-.kv{font-family:var(--fh);font-size:21px;font-weight:700;line-height:1;}
-.ku{font-size:10px;color:var(--muted);margin-top:2px;}
-.cg{color:var(--green1)}.cy{color:var(--yellow)}.cr{color:var(--red)}.co{color:var(--orange)}.cb{color:var(--blue);}
-
-/* máquina list */
-.ml{display:flex;flex-direction:column;gap:5px;}
-.mi{background:#0d1f17;border:1px solid var(--border);border-radius:5px;padding:8px 10px;display:flex;align-items:center;gap:8px;cursor:pointer;transition:border-color .2s;}
-.mi:hover{border-color:var(--green3);}
-.mi-icon{font-size:18px;width:24px;text-align:center;}
-.mi-info{flex:1;}
-.mi-name{font-family:var(--fh);font-size:13px;font-weight:600;color:var(--text);}
-.mi-sub{font-size:10px;color:var(--muted);}
-.mi-status{font-size:10px;font-weight:600;padding:2px 7px;border-radius:10px;}
-.s-op{background:#003322;color:var(--green1);border:1px solid var(--green3);}
-.s-mn{background:#1a0a00;color:var(--orange);border:1px solid #663300;}
-.s-ps{background:#1a1a00;color:var(--yellow);border:1px solid #555500);}
-.s-tr{background:#000d1a;color:var(--blue);border:1px solid #003366);}
+.ss{padding:12px;border-bottom:1px solid var(--border);}
+.st{font-family:var(--fh);font-size:10px;font-weight:700;color:var(--muted);letter-spacing:2px;text-transform:uppercase;margin-bottom:9px;}
+.kg{display:grid;grid-template-columns:1fr 1fr;gap:6px;}
+.kc{background:#0d1f17;border:1px solid var(--border);border-radius:5px;padding:8px 10px;}
+.kl{font-size:9px;color:var(--muted);letter-spacing:1px;text-transform:uppercase;margin-bottom:2px;}
+.kv{font-family:var(--fh);font-size:20px;font-weight:700;line-height:1;}
+.ku{font-size:9px;color:var(--muted);margin-top:1px;}
+.cg{color:var(--g1)}.cy{color:var(--yel)}.cr{color:var(--red)}.co{color:var(--ora)}
 
 /* legenda */
 .lg{display:flex;flex-direction:column;gap:5px;}
-.lr{display:flex;align-items:center;gap:8px;font-size:11px;color:var(--muted);}
-.ld{width:10px;height:10px;border-radius:2px;flex-shrink:0;}
+.lr{display:flex;align-items:center;gap:7px;font-size:10px;color:var(--muted);}
+.ld{width:10px;height:10px;border-radius:50%;flex-shrink:0;}
+
+/* lista máquinas */
+.ml{display:flex;flex-direction:column;gap:4px;}
+.mi{background:#0d1f17;border:1px solid var(--border);border-radius:4px;padding:7px 9px;display:flex;align-items:center;gap:7px;}
+.mi-ic{font-size:15px;width:20px;text-align:center;}
+.mi-inf{flex:1;}
+.mi-nm{font-family:var(--fh);font-size:12px;font-weight:600;color:var(--text);}
+.mi-sb{font-size:9px;color:var(--muted);}
+.ms{font-size:9px;font-weight:600;padding:2px 6px;border-radius:8px;}
+.ms-op{background:#003322;color:var(--g1);border:1px solid var(--g3);}
+.ms-mn{background:#1a0a00;color:var(--ora);border:1px solid #663300;}
+.ms-qb{background:#1a0000;color:var(--red);border:1px solid #660000;}
 
 /* BOTTOM */
-#bot{grid-column:1/-1;display:flex;border-top:1px solid var(--border);background:var(--panel);overflow:hidden;}
-.sb2{flex:1;display:flex;flex-direction:column;justify-content:center;padding:0 18px;border-right:1px solid var(--border);}
+#bot{grid-column:1/-1;display:flex;border-top:1px solid var(--border);background:var(--panel);}
+.sb2{flex:1;display:flex;flex-direction:column;justify-content:center;padding:0 16px;border-right:1px solid var(--border);}
 .sb2:last-child{border-right:none;}
-.sl{font-size:10px;color:var(--muted);letter-spacing:1.5px;text-transform:uppercase;margin-bottom:3px;}
-.sv{font-family:var(--fh);font-size:24px;font-weight:700;}
-.ss2{font-size:10px;color:var(--muted);margin-top:2px;}
-.pw{display:flex;align-items:center;gap:6px;margin-top:5px;}
+.sl{font-size:9px;color:var(--muted);letter-spacing:1.5px;text-transform:uppercase;margin-bottom:2px;}
+.sv{font-family:var(--fh);font-size:22px;font-weight:700;}
+.ss2{font-size:9px;color:var(--muted);margin-top:1px;}
+.pw{display:flex;align-items:center;gap:5px;margin-top:4px;}
 .pb2{flex:1;height:3px;background:var(--border);border-radius:2px;}
 .pf{height:3px;border-radius:2px;}
-.pp{font-size:10px;min-width:28px;}
+.pp{font-size:9px;min-width:26px;}
 </style>
 </head>
 <body>
 <div id="app">
 
-<header id="header">
-  <div style="display:flex;align-items:center;gap:12px;">
-    <svg width="32" height="32" viewBox="0 0 32 32" fill="none">
-      <rect x="2" y="14" width="20" height="10" rx="2" stroke="#00ff88" stroke-width="1.5" fill="none"/>
-      <rect x="6" y="10" width="10" height="6" rx="1" stroke="#00ff88" stroke-width="1.5" fill="none"/>
-      <circle cx="7" cy="24" r="3" stroke="#00ff88" stroke-width="1.5" fill="none"/>
-      <circle cx="17" cy="24" r="3" stroke="#00ff88" stroke-width="1.5" fill="none"/>
-      <line x1="22" y1="19" x2="30" y2="19" stroke="#00ff88" stroke-width="1.5"/>
+<header id="hdr">
+  <div style="display:flex;align-items:center;gap:10px;">
+    <svg width="30" height="30" viewBox="0 0 30 30" fill="none">
+      <rect x="2" y="13" width="18" height="9" rx="2" stroke="#00ff88" stroke-width="1.5" fill="none"/>
+      <rect x="5" y="9" width="9" height="5" rx="1" stroke="#00ff88" stroke-width="1.5" fill="none"/>
+      <circle cx="6" cy="22" r="2.5" stroke="#00ff88" stroke-width="1.5" fill="none"/>
+      <circle cx="16" cy="22" r="2.5" stroke="#00ff88" stroke-width="1.5" fill="none"/>
     </svg>
     <div>
-      <div class="logo-text">COA DASHBOARD</div>
-      <div class="logo-sub">Frota Agrícola · Monitoramento em Campo</div>
+      <div class="ltxt">COA DASHBOARD</div>
+      <div class="lsub">Pátio de Frota · Status Operacional</div>
     </div>
   </div>
-  <div class="hright">
-    <span class="badge badge-frota">🚜 FROTA ATIVA</span>
-    <span class="badge badge-live">● AO VIVO</span>
-    <span class="clock" id="clock">--:--:--</span>
+  <div class="hr">
+    <span class="badge bf">🚜 FROTA AGRÍCOLA</span>
+    <span class="badge bl">● AO VIVO</span>
+    <span class="clk" id="clock">--:--:--</span>
   </div>
 </header>
 
 <div id="cw">
   <canvas id="c"></canvas>
-  <div class="clabel">▸ CAMPO 3D · FROTA AGRÍCOLA EM OPERAÇÃO</div>
-  <div class="chint">🖱 Arraste para rotacionar · Scroll para zoom</div>
+  <div class="clb">▸ PÁTIO 3D · GARAGEM E STATUS DA FROTA</div>
+  <div class="chn">🖱 Arraste para rotacionar · Scroll para zoom</div>
   <div id="tt">
-    <div class="ttn" id="tt-name">—</div>
-    <div class="ttr"><span>Tipo</span><span id="tt-tipo">—</span></div>
-    <div class="ttr"><span>ID</span><span id="tt-id">—</span></div>
-    <div class="ttr"><span>Operador</span><span id="tt-op">—</span></div>
-    <div class="ttr"><span>Status</span><span id="tt-st">—</span></div>
-    <div class="ttr"><span>Velocidade</span><span id="tt-vel">—</span></div>
-    <div class="ttr"><span>Horas Hoje</span><span id="tt-hrs">—</span></div>
+    <div class="tn" id="tt-nm">—</div>
+    <div class="tr"><span>ID</span><span id="tt-id">—</span></div>
+    <div class="tr"><span>Operador</span><span id="tt-op">—</span></div>
+    <div class="tr"><span>Status</span><span id="tt-st">—</span></div>
+    <div class="tr"><span>Horas Hoje</span><span id="tt-hr">—</span></div>
+    <div class="tr"><span>Observação</span><span id="tt-ob">—</span></div>
   </div>
 </div>
 
@@ -144,30 +132,22 @@ html,body{width:100%;height:100%;background:var(--bg);color:var(--text);font-fam
   <div class="ss">
     <div class="st">📊 KPIs da Frota</div>
     <div class="kg">
-      <div class="kc"><div class="kl">Em Operação</div><div class="kv cg">18</div><div class="ku">máquinas</div></div>
-      <div class="kc"><div class="kl">Em Manutenção</div><div class="kv co">4</div><div class="ku">máquinas</div></div>
-      <div class="kc"><div class="kl">Paradas</div><div class="kv cy">3</div><div class="ku">máquinas</div></div>
-      <div class="kc"><div class="kl">Eficiência</div><div class="kv cg">76%</div><div class="ku">disponib. mecânica</div></div>
-      <div class="kc"><div class="kl">Colhedoras</div><div class="kv cg">6</div><div class="ku">ativas / 8 total</div></div>
-      <div class="kc"><div class="kl">Cana/Hora</div><div class="kv cy">148</div><div class="ku">ton/h média</div></div>
+      <div class="kc"><div class="kl">Em Operação</div><div class="kv cg">14</div><div class="ku">máquinas</div></div>
+      <div class="kc"><div class="kl">Manutenção</div><div class="kv co">4</div><div class="ku">máquinas</div></div>
+      <div class="kc"><div class="kl">Quebrado Campo</div><div class="kv cr">2</div><div class="ku">máquinas</div></div>
+      <div class="kc"><div class="kl">Disponib.</div><div class="kv cy">70%</div><div class="ku">mecânica</div></div>
     </div>
   </div>
-
   <div class="ss">
-    <div class="st">🎨 Legenda de Frota</div>
+    <div class="st">🎨 Legenda</div>
     <div class="lg">
-      <div class="lr"><div class="ld" style="background:#00ff88"></div> Colhedora em operação</div>
-      <div class="lr"><div class="ld" style="background:#ffe066"></div> Transbordo / Graneleiro</div>
-      <div class="lr"><div class="ld" style="background:#ff9933"></div> Caminhão canavieiro</div>
-      <div class="lr"><div class="ld" style="background:#44aaff"></div> Trator de apoio</div>
-      <div class="lr"><div class="ld" style="background:#cc44ff"></div> Caminhão prancha</div>
-      <div class="lr"><div class="ld" style="background:#ff4444"></div> Comboio (combustível/oficina)</div>
-      <div class="lr"><div class="ld" style="background:#334433"></div> Parado / Manutenção</div>
+      <div class="lr"><div class="ld" style="background:var(--g1)"></div> Operando — em movimento</div>
+      <div class="lr"><div class="ld" style="background:var(--ora)"></div> Manutenção — luz laranja</div>
+      <div class="lr"><div class="ld" style="background:var(--red)"></div> Quebrado no campo</div>
     </div>
   </div>
-
   <div class="ss">
-    <div class="st">🚜 Máquinas em Campo</div>
+    <div class="st">🚜 Máquinas</div>
     <div class="ml" id="mlist"></div>
   </div>
 </aside>
@@ -175,40 +155,40 @@ html,body{width:100%;height:100%;background:var(--bg);color:var(--text);font-fam
 <div id="bot">
   <div class="sb2">
     <div class="sl">Cana Colhida Hoje</div>
-    <div class="sv cg">6.240 <span style="font-size:13px">ton</span></div>
+    <div class="sv cg">6.240 <span style="font-size:12px">ton</span></div>
     <div class="ss2">Meta: 6.500 ton/dia</div>
-    <div class="pw"><div class="pb2"><div class="pf" style="width:96%;background:var(--green1)"></div></div><div class="pp cg">96%</div></div>
+    <div class="pw"><div class="pb2"><div class="pf" style="width:96%;background:var(--g1)"></div></div><div class="pp cg">96%</div></div>
   </div>
   <div class="sb2">
     <div class="sl">Horas Trabalhadas</div>
-    <div class="sv cy">9,4 <span style="font-size:13px">h méd.</span></div>
+    <div class="sv cy">9,4 <span style="font-size:12px">h méd.</span></div>
     <div class="ss2">Jornada: 10h / turno</div>
-    <div class="pw"><div class="pb2"><div class="pf" style="width:94%;background:var(--yellow)"></div></div><div class="pp cy">94%</div></div>
+    <div class="pw"><div class="pb2"><div class="pf" style="width:94%;background:var(--yel)"></div></div><div class="pp cy">94%</div></div>
   </div>
   <div class="sb2">
     <div class="sl">Disponib. Mecânica</div>
-    <div class="sv cg">76%</div>
-    <div class="ss2">Meta: ≥ 80%</div>
-    <div class="pw"><div class="pb2"><div class="pf" style="width:76%;background:var(--orange)"></div></div><div class="pp co">76%</div></div>
+    <div class="sv co">70%</div>
+    <div class="ss2">Meta: ≥ 80% · Abaixo da meta</div>
+    <div class="pw"><div class="pb2"><div class="pf" style="width:70%;background:var(--ora)"></div></div><div class="pp co">70%</div></div>
   </div>
   <div class="sb2">
     <div class="sl">Consumo Diesel</div>
-    <div class="sv co">3.840 <span style="font-size:13px">L</span></div>
-    <div class="ss2">Média: 213 L/colhedora</div>
+    <div class="sv co">3.840 <span style="font-size:12px">L</span></div>
+    <div class="ss2">Média: 274 L/máquina</div>
   </div>
   <div class="sb2">
     <div class="sl">Viagens Caminhões</div>
     <div class="sv cg">47</div>
-    <div class="ss2">Hoje · média 132 ton/viagem</div>
+    <div class="ss2">Média 132 ton/viagem</div>
   </div>
   <div class="sb2">
-    <div class="sl">Alertas Frota</div>
+    <div class="sl">Alertas Urgentes</div>
     <div class="sv cr">2</div>
-    <div class="ss2">Manutenção urgente</div>
+    <div class="ss2">Aguardando reparo</div>
   </div>
 </div>
 
-</div>
+</div><!-- /app -->
 
 <script src="https://unpkg.com/three@0.128.0/build/three.min.js"></script>
 <script>
@@ -216,295 +196,275 @@ html,body{width:100%;height:100%;background:var(--bg);color:var(--text);font-fam
 function tick(){document.getElementById('clock').textContent=new Date().toLocaleTimeString('pt-BR',{hour:'2-digit',minute:'2-digit',second:'2-digit'});}
 setInterval(tick,1000);tick();
 
-// ── FROTA DATA ──────────────────────────────────────────────────────────────
+// ── FROTA ────────────────────────────────────────────────────────────────────
 const FROTA = [
-  {name:'Colhedora',  id:'COL-01', op:'José Alves',    status:'Operando',   vel:'5,2 km/h', hrs:'9,1h', tipo:'colhedora', color:0x00ff88},
-  {name:'Colhedora',  id:'COL-02', op:'Pedro Lima',    status:'Operando',   vel:'4,8 km/h', hrs:'8,7h', tipo:'colhedora', color:0x00ff88},
-  {name:'Colhedora',  id:'COL-03', op:'Carlos Souza',  status:'Operando',   vel:'5,5 km/h', hrs:'9,3h', tipo:'colhedora', color:0x00ff88},
-  {name:'Colhedora',  id:'COL-04', op:'Marcos Silva',  status:'Operando',   vel:'4,6 km/h', hrs:'8,9h', tipo:'colhedora', color:0x00ff88},
-  {name:'Colhedora',  id:'COL-05', op:'Rafael Costa',  status:'Manutenção', vel:'—',         hrs:'3,2h', tipo:'colhedora', color:0x334433},
-  {name:'Colhedora',  id:'COL-06', op:'André Matos',   status:'Operando',   vel:'5,0 km/h', hrs:'9,5h', tipo:'colhedora', color:0x00ff88},
-  {name:'Transbordo', id:'TRB-01', op:'Luiz Ferreira', status:'Operando',   vel:'8,1 km/h', hrs:'9,0h', tipo:'transbordo', color:0xffe066},
-  {name:'Transbordo', id:'TRB-02', op:'Paulo Rocha',   status:'Operando',   vel:'7,6 km/h', hrs:'8,5h', tipo:'transbordo', color:0xffe066},
-  {name:'Transbordo', id:'TRB-03', op:'Fábio Nunes',   status:'Operando',   vel:'8,3 km/h', hrs:'9,2h', tipo:'transbordo', color:0xffe066},
-  {name:'Transbordo', id:'TRB-04', op:'Sérgio Dias',   status:'Parado',     vel:'—',         hrs:'2,1h', tipo:'transbordo', color:0x334433},
-  {name:'Caminhão',   id:'CAM-01', op:'Bruno Leal',    status:'Operando',   vel:'42 km/h',  hrs:'8,8h', tipo:'caminhao',  color:0xff9933},
-  {name:'Caminhão',   id:'CAM-02', op:'Diego Pinto',   status:'Operando',   vel:'38 km/h',  hrs:'9,1h', tipo:'caminhao',  color:0xff9933},
-  {name:'Caminhão',   id:'CAM-03', op:'Felipe Gomes',  status:'Operando',   vel:'45 km/h',  hrs:'8,6h', tipo:'caminhao',  color:0xff9933},
-  {name:'Caminhão',   id:'CAM-04', op:'Gustavo Reis',  status:'Manutenção', vel:'—',         hrs:'1,5h', tipo:'caminhao',  color:0x334433},
-  {name:'Trator',     id:'TRT-01', op:'Henrique Luz',  status:'Operando',   vel:'6,2 km/h', hrs:'7,9h', tipo:'trator',   color:0x44aaff},
-  {name:'Trator',     id:'TRT-02', op:'Igor Bastos',   status:'Operando',   vel:'5,8 km/h', hrs:'8,2h', tipo:'trator',   color:0x44aaff},
-  {name:'Prancha',    id:'PRN-01', op:'Júlio Vargas',  status:'Operando',   vel:'55 km/h',  hrs:'6,5h', tipo:'prancha',  color:0xcc44ff},
-  {name:'Comboio',    id:'CMB-01', op:'Kleber Assis',  status:'Operando',   vel:'12 km/h',  hrs:'9,8h', tipo:'comboio',  color:0xff4444},
+  // COLHEDORAS
+  {nome:'Colhedora', id:'COL-01', op:'José Alves',    status:'op',  hrs:'9,1h', obs:'Normal',             tipo:'col', qi:0},
+  {nome:'Colhedora', id:'COL-02', op:'Pedro Lima',    status:'op',  hrs:'8,7h', obs:'Normal',             tipo:'col', qi:1},
+  {nome:'Colhedora', id:'COL-03', op:'Carlos Souza',  status:'op',  hrs:'9,3h', obs:'Normal',             tipo:'col', qi:2},
+  {nome:'Colhedora', id:'COL-04', op:'Marcos Silva',  status:'op',  hrs:'8,9h', obs:'Normal',             tipo:'col', qi:3},
+  {nome:'Colhedora', id:'COL-05', op:'Rafael Costa',  status:'mn',  hrs:'3,2h', obs:'Troca de corrente',  tipo:'col', qi:4},
+  {nome:'Colhedora', id:'COL-06', op:'André Matos',   status:'qb',  hrs:'2,0h', obs:'Quebrada no campo',  tipo:'col', qi:5},
+  // TRANSBORDOS
+  {nome:'Transbordo', id:'TRB-01', op:'Luiz Ferreira', status:'op', hrs:'9,0h', obs:'Normal',             tipo:'trb', qi:0},
+  {nome:'Transbordo', id:'TRB-02', op:'Paulo Rocha',   status:'op', hrs:'8,5h', obs:'Normal',             tipo:'trb', qi:1},
+  {nome:'Transbordo', id:'TRB-03', op:'Fábio Nunes',   status:'op', hrs:'9,2h', obs:'Normal',             tipo:'trb', qi:2},
+  {nome:'Transbordo', id:'TRB-04', op:'Sérgio Dias',   status:'mn', hrs:'2,1h', obs:'Vazamento hidráulico',tipo:'trb',qi:3},
+  // CAMINHÕES
+  {nome:'Caminhão',  id:'CAM-01', op:'Bruno Leal',    status:'op',  hrs:'8,8h', obs:'Normal',             tipo:'cam', qi:0},
+  {nome:'Caminhão',  id:'CAM-02', op:'Diego Pinto',   status:'op',  hrs:'9,1h', obs:'Normal',             tipo:'cam', qi:1},
+  {nome:'Caminhão',  id:'CAM-03', op:'Felipe Gomes',  status:'op',  hrs:'8,6h', obs:'Normal',             tipo:'cam', qi:2},
+  {nome:'Caminhão',  id:'CAM-04', op:'Gustavo Reis',  status:'mn',  hrs:'1,5h', obs:'Pneu furado',        tipo:'cam', qi:3},
+  // PRANCHA
+  {nome:'Prancha',   id:'PRN-01', op:'Júlio Vargas',  status:'op',  hrs:'6,5h', obs:'Transporte colhedora',tipo:'prn',qi:0},
+  {nome:'Prancha',   id:'PRN-02', op:'Kleber Assis',  status:'mn',  hrs:'0,0h', obs:'Revisão programada', tipo:'prn', qi:1},
+  // COMBOIO
+  {nome:'Comboio',   id:'CMB-01', op:'Leandro Cruz',  status:'op',  hrs:'9,8h', obs:'Abastecimento campo', tipo:'cmb',qi:0},
+  {nome:'Comboio',   id:'CMB-02', op:'Maurício Faria',status:'qb',  hrs:'4,2h', obs:'Quebrado no campo',  tipo:'cmb', qi:1},
+  // TRATORES
+  {nome:'Trator',    id:'TRT-01', op:'Nelson Braga',  status:'op',  hrs:'7,9h', obs:'Gradeando',          tipo:'trt', qi:0},
+  {nome:'Trator',    id:'TRT-02', op:'Otávio Lima',   status:'op',  hrs:'8,2h', obs:'Apoio colheita',     tipo:'trt', qi:1},
 ];
 
 // sidebar list
-const mlist = document.getElementById('mlist');
-const icons = {colhedora:'🌾',transbordo:'🚜',caminhao:'🚛',trator:'🚜',prancha:'🚚',comboio:'⛽'};
-const sclass = {Operando:'s-op',Manutenção:'s-mn',Parado:'s-ps'};
+const icons={col:'🌾',trb:'🚜',cam:'🚛',prn:'🚚',cmb:'⛽',trt:'🚜'};
+const slbl={op:'Operando',mn:'Manutenção',qb:'Quebrado'};
+const scls={op:'ms-op',mn:'ms-mn',qb:'ms-qb'};
+const mlist=document.getElementById('mlist');
 FROTA.forEach(m=>{
   mlist.innerHTML+=`<div class="mi">
-    <div class="mi-icon">${icons[m.tipo]||'🚗'}</div>
-    <div class="mi-info"><div class="mi-name">${m.name} · ${m.id}</div><div class="mi-sub">${m.op}</div></div>
-    <span class="mi-status ${sclass[m.status]||'s-op'}">${m.status}</span>
+    <div class="mi-ic">${icons[m.tipo]}</div>
+    <div class="mi-inf"><div class="mi-nm">${m.nome} · ${m.id}</div><div class="mi-sb">${m.op}</div></div>
+    <span class="ms ${scls[m.status]}">${slbl[m.status]}</span>
   </div>`;
 });
 
-// ── THREE.JS ────────────────────────────────────────────────────────────────
-const canvas   = document.getElementById('c');
-const wrap     = document.getElementById('cw');
-const renderer = new THREE.WebGLRenderer({canvas, antialias:true});
+// ── THREE.JS ─────────────────────────────────────────────────────────────────
+const canvas=document.getElementById('c');
+const wrap=document.getElementById('cw');
+const renderer=new THREE.WebGLRenderer({canvas,antialias:true});
 renderer.setClearColor(0x050d0a,1);
 renderer.setPixelRatio(window.devicePixelRatio);
-renderer.shadowMap.enabled = true;
 
-const scene  = new THREE.Scene();
-scene.fog    = new THREE.Fog(0x050d0a, 40, 80);
-const camera = new THREE.PerspectiveCamera(50,1,0.1,500);
-camera.position.set(0,14,22);
+const scene=new THREE.Scene();
+scene.fog=new THREE.Fog(0x050d0a,50,90);
+
+const camera=new THREE.PerspectiveCamera(45,1,0.1,300);
+camera.position.set(0,18,26);
 camera.lookAt(0,0,0);
 
-// lights
-scene.add(new THREE.AmbientLight(0x002211,2));
-const sun = new THREE.DirectionalLight(0x88ffbb,1.2);
-sun.position.set(20,40,20);
-sun.castShadow=true;
-scene.add(sun);
-scene.add(new THREE.DirectionalLight(0x001108,.4).position.set(-20,10,-20));
+// Luzes
+scene.add(new THREE.AmbientLight(0x003311,2.5));
+const dl=new THREE.DirectionalLight(0x88ffcc,1.0);
+dl.position.set(15,30,15);
+scene.add(dl);
+const dl2=new THREE.DirectionalLight(0xffffff,0.3);
+dl2.position.set(-15,10,-10);
+scene.add(dl2);
 
-// ── GROUND / CANAVIAL ───────────────────────────────────────────────────────
-// Chão base
-const gGeo = new THREE.PlaneGeometry(80,80,1,1);
-const gMat = new THREE.MeshStandardMaterial({color:0x03110a,roughness:1});
-const ground = new THREE.Mesh(gGeo,gMat);
-ground.rotation.x=-Math.PI/2; ground.receiveShadow=true;
-scene.add(ground);
+// ── PÁTIO BASE ───────────────────────────────────────────────────────────────
+// Chão geral
+const floor=new THREE.Mesh(
+  new THREE.PlaneGeometry(70,50),
+  new THREE.MeshStandardMaterial({color:0x080f0b,roughness:1})
+);
+floor.rotation.x=-Math.PI/2; floor.position.y=0;
+scene.add(floor);
 
-// Linhas de cana (fileiras verdes)
-const rowCount = 40;
-const rowGroup = new THREE.Group();
-for(let r=0;r<rowCount;r++){
-  const rowZ = -38 + r*2;
-  for(let s=0;s<60;s++){
-    const h = 1.2 + Math.random()*0.6;
-    const stalkGeo = new THREE.CylinderGeometry(0.04,0.06,h,4);
-    const stalkMat = new THREE.MeshStandardMaterial({
-      color: new THREE.Color(0.05+Math.random()*0.05, 0.25+Math.random()*0.15, 0.05+Math.random()*0.05),
-      roughness:1
-    });
-    const stalk = new THREE.Mesh(stalkGeo,stalkMat);
-    stalk.position.set(-38+s*1.3+(Math.random()-.5)*.3, h/2, rowZ+(Math.random()-.5)*.3);
-    rowGroup.add(stalk);
-  }
+// Linhas de piso (marcações)
+function addLine(x1,z1,x2,z2,col){
+  const pts=[new THREE.Vector3(x1,0.02,z1),new THREE.Vector3(x2,0.02,z2)];
+  const geo=new THREE.BufferGeometry().setFromPoints(pts);
+  const mat=new THREE.LineBasicMaterial({color:col||0x0f3022});
+  scene.add(new THREE.Line(geo,mat));
 }
-scene.add(rowGroup);
+// Divisórias dos quadrantes
+addLine(-35,0,35,0,0x0f3022);   // linha horizontal centro
+addLine(0,-25,0,25,0x0f3022);   // linha vertical centro
+// Bordas
+addLine(-35,-25,35,-25,0x0a2018);
+addLine(-35,25,35,25,0x0a2018);
+addLine(-35,-25,-35,25,0x0a2018);
+addLine(35,-25,35,25,0x0a2018);
 
-// Estrada de terra (caminho das máquinas)
-function makeRoad(x1,z1,x2,z2,w){
-  const len = Math.sqrt((x2-x1)**2+(z2-z1)**2);
-  const geo = new THREE.PlaneGeometry(w,len);
-  const mat = new THREE.MeshStandardMaterial({color:0x1a1008,roughness:1});
-  const m   = new THREE.Mesh(geo,mat);
+// Labels dos quadrantes (placas no chão)
+function makeLabel(text,x,z,color){
+  const cv=document.createElement('canvas');
+  cv.width=256;cv.height=64;
+  const ctx=cv.getContext('2d');
+  ctx.fillStyle='rgba(0,0,0,0)';
+  ctx.fillRect(0,0,256,64);
+  ctx.font='bold 28px Rajdhani,sans-serif';
+  ctx.fillStyle=color||'#4a7a62';
+  ctx.textAlign='center';
+  ctx.fillText(text,128,42);
+  const tex=new THREE.CanvasTexture(cv);
+  const m=new THREE.Mesh(
+    new THREE.PlaneGeometry(12,3),
+    new THREE.MeshBasicMaterial({map:tex,transparent:true,depthWrite:false})
+  );
   m.rotation.x=-Math.PI/2;
-  m.rotation.z=-Math.atan2(x2-x1,z2-z1);
-  m.position.set((x1+x2)/2,.01,(z1+z2)/2);
+  m.position.set(x,0.03,z);
   scene.add(m);
 }
-// estradas principais
-makeRoad(-35,0,35,0,3);    // horizontal centro
-makeRoad(0,-38,0,38,3);    // vertical centro
-makeRoad(-35,-15,35,-15,2);
-makeRoad(-35,15,35,15,2);
+makeLabel('🌾 COLHEDORAS',-17,-21,'#00ff88');
+makeLabel('🚜 TRANSBORDOS / TRATORES',17,-21,'#ffe066');
+makeLabel('🚛 CAMINHÕES / PRANCHA',-17,21,'#ff9933');
+makeLabel('⛽ COMBOIO / APOIO',17,21,'#ff4444');
 
-// ── BUILDERS DE MÁQUINAS ───────────────────────────────────────────────────
-function buildColhedora(color){
+// ── CONSTRUTORES DE MÁQUINAS ──────────────────────────────────────────────────
+function box(w,h,d,color,metal){
+  return new THREE.Mesh(
+    new THREE.BoxGeometry(w,h,d),
+    new THREE.MeshStandardMaterial({color,roughness:.6,metalness:metal||.2})
+  );
+}
+
+function buildColhedora(col){
   const g=new THREE.Group();
-  // corpo
-  const body=new THREE.Mesh(new THREE.BoxGeometry(2,1.8,3.5),new THREE.MeshStandardMaterial({color,roughness:.6,metalness:.3}));
-  body.position.y=1.5; g.add(body);
-  // cabine
-  const cab=new THREE.Mesh(new THREE.BoxGeometry(1.4,1.1,1.5),new THREE.MeshStandardMaterial({color:0x002211,roughness:.4,metalness:.5}));
-  cab.position.set(0,2.9,-.8); g.add(cab);
-  // plataforma de corte
-  const plat=new THREE.Mesh(new THREE.BoxGeometry(2.4,.3,1.2),new THREE.MeshStandardMaterial({color:0x333300,roughness:.8}));
-  plat.position.set(0,1.0,2.2); g.add(plat);
-  // elevador
-  const elev=new THREE.Mesh(new THREE.BoxGeometry(.4,.3,2.5),new THREE.MeshStandardMaterial({color:0x222200,roughness:.8}));
-  elev.position.set(.8,2.8,.3); elev.rotation.z=-.3; g.add(elev);
-  // rodas
-  [-1,1].forEach(sx=>[-1.2,1.2].forEach(sz=>{
-    const w=new THREE.Mesh(new THREE.CylinderGeometry(.55,.55,.3,12),new THREE.MeshStandardMaterial({color:0x111111,roughness:1}));
-    w.rotation.z=Math.PI/2; w.position.set(sx*1.1,.55,sz); g.add(w);
+  const body=box(1.8,1.6,3.2,col,.3); body.position.y=1.1; g.add(body);
+  const cab=box(1.2,1.0,1.4,0x002211,.5); cab.position.set(0,2.4,-.7); g.add(cab);
+  const plat=box(2.0,.25,1.0,0x333300,.1); plat.position.set(0,.9,1.8); g.add(plat);
+  const elev=box(.35,.25,2.2,0x222200,.1); elev.rotation.z=-.25; elev.position.set(.7,2.6,.2); g.add(elev);
+  [-1,1].forEach(sx=>[-1,1].forEach(sz=>{
+    const w=new THREE.Mesh(new THREE.CylinderGeometry(.45,.45,.25,10),new THREE.MeshStandardMaterial({color:0x111111,roughness:1}));
+    w.rotation.z=Math.PI/2; w.position.set(sx*.95,.45,sz*.9); g.add(w);
   }));
   return g;
 }
 
-function buildTransbordo(color){
+function buildTransbordo(col){
   const g=new THREE.Group();
-  const body=new THREE.Mesh(new THREE.BoxGeometry(2.2,1.4,5),new THREE.MeshStandardMaterial({color,roughness:.7,metalness:.2}));
-  body.position.y=1.2; g.add(body);
-  // laterais da caçamba
-  const side=new THREE.Mesh(new THREE.BoxGeometry(.1,1,5),new THREE.MeshStandardMaterial({color:0x886600,roughness:.8}));
-  [-1.1,1.1].forEach(x=>{const s=side.clone();s.position.set(x,2,0);g.add(s);});
-  // rodas
-  [-1,1].forEach(sx=>[-1.8,0,1.8].forEach(sz=>{
-    const w=new THREE.Mesh(new THREE.CylinderGeometry(.5,.5,.25,10),new THREE.MeshStandardMaterial({color:0x111111,roughness:1}));
-    w.rotation.z=Math.PI/2; w.position.set(sx*1.2,.5,sz); g.add(w);
+  const body=box(2.0,1.2,4.5,col,.2); body.position.y=1.0; g.add(body);
+  [-1,1].forEach(x=>{const s=box(.08,.9,4.5,0x886600,.1);s.position.set(x*1.05,1.75,0);g.add(s);});
+  [-1,1].forEach(sx=>[-1.5,0,1.5].forEach(sz=>{
+    const w=new THREE.Mesh(new THREE.CylinderGeometry(.42,.42,.22,10),new THREE.MeshStandardMaterial({color:0x111111,roughness:1}));
+    w.rotation.z=Math.PI/2; w.position.set(sx*1.1,.42,sz); g.add(w);
   }));
   return g;
 }
 
-function buildCaminhao(color){
+function buildCaminhao(col){
   const g=new THREE.Group();
-  // cabine
-  const cab=new THREE.Mesh(new THREE.BoxGeometry(2.2,2,2),new THREE.MeshStandardMaterial({color:0x333300,roughness:.6,metalness:.3}));
-  cab.position.set(0,1.5,-2.5); g.add(cab);
-  // carroceria
-  const body=new THREE.Mesh(new THREE.BoxGeometry(2.2,1.6,5),new THREE.MeshStandardMaterial({color,roughness:.7,metalness:.2}));
-  body.position.set(0,1.3,1.2); g.add(body);
-  // grade carroceria
-  const grade=new THREE.Mesh(new THREE.BoxGeometry(2.3,.1,5.1),new THREE.MeshStandardMaterial({color:0x554400,roughness:.9}));
-  grade.position.set(0,2.2,1.2); g.add(grade);
-  // rodas
+  const cab=box(2.0,2.0,2.0,0x333300,.4); cab.position.set(0,1.3,-2.2); g.add(cab);
+  const body=box(2.0,1.4,4.5,col,.2); body.position.set(0,1.1,1.0); g.add(body);
+  [-1,1].forEach(sx=>[-2,-1,1,2].forEach(sz=>{
+    const w=new THREE.Mesh(new THREE.CylinderGeometry(.48,.48,.24,10),new THREE.MeshStandardMaterial({color:0x111111,roughness:1}));
+    w.rotation.z=Math.PI/2; w.position.set(sx*1.1,.48,sz); g.add(w);
+  }));
+  return g;
+}
+
+function buildPrancha(col){
+  const g=new THREE.Group();
+  const cab=box(2.2,2.0,2.0,0x220033,.4); cab.position.set(0,1.3,-3.5); g.add(cab);
+  const plat=box(2.2,.28,7.0,col,.3); plat.position.set(0,.8,0); g.add(plat);
+  const mini=buildColhedora(0x006633); mini.scale.set(.45,.45,.45); mini.position.set(0,1.1,.5); g.add(mini);
   [-1,1].forEach(sx=>[-2.5,-1,1,2.5].forEach(sz=>{
-    const w=new THREE.Mesh(new THREE.CylinderGeometry(.55,.55,.28,10),new THREE.MeshStandardMaterial({color:0x111111,roughness:1}));
-    w.rotation.z=Math.PI/2; w.position.set(sx*1.2,.55,sz); g.add(w);
+    const w=new THREE.Mesh(new THREE.CylinderGeometry(.48,.48,.24,10),new THREE.MeshStandardMaterial({color:0x111111,roughness:1}));
+    w.rotation.z=Math.PI/2; w.position.set(sx*1.2,.48,sz); g.add(w);
   }));
   return g;
 }
 
-function buildTrator(color){
+function buildComboio(col){
   const g=new THREE.Group();
-  const body=new THREE.Mesh(new THREE.BoxGeometry(1.6,1.4,2.8),new THREE.MeshStandardMaterial({color,roughness:.6,metalness:.4}));
-  body.position.y=1.3; g.add(body);
-  const cab=new THREE.Mesh(new THREE.BoxGeometry(1.2,1,1.4),new THREE.MeshStandardMaterial({color:0x001122,roughness:.4}));
-  cab.position.set(0,2.4,-.4); g.add(cab);
+  const cab=box(1.9,1.9,1.9,0x1a0000,.4); cab.position.set(0,1.2,-2.0); g.add(cab);
+  const tank=new THREE.Mesh(new THREE.CylinderGeometry(.75,.75,3.8,16),new THREE.MeshStandardMaterial({color:col,roughness:.4,metalness:.6}));
+  tank.rotation.z=Math.PI/2; tank.position.set(0,1.5,1.2); g.add(tank);
+  [-1,1].forEach(sx=>[-2,0,2].forEach(sz=>{
+    const w=new THREE.Mesh(new THREE.CylinderGeometry(.48,.48,.24,10),new THREE.MeshStandardMaterial({color:0x111111,roughness:1}));
+    w.rotation.z=Math.PI/2; w.position.set(sx*1.05,.48,sz); g.add(w);
+  }));
+  return g;
+}
+
+function buildTrator(col){
+  const g=new THREE.Group();
+  const body=box(1.5,1.3,2.6,col,.4); body.position.y=1.1; g.add(body);
+  const cab=box(1.1,.95,1.3,0x001122,.4); cab.position.set(0,2.2,-.3); g.add(cab);
   [-1,1].forEach(sx=>{
-    const wB=new THREE.Mesh(new THREE.CylinderGeometry(.7,.7,.28,12),new THREE.MeshStandardMaterial({color:0x111111,roughness:1}));
-    wB.rotation.z=Math.PI/2; wB.position.set(sx*.95,.7,-.8); g.add(wB);
-    const wF=new THREE.Mesh(new THREE.CylinderGeometry(.45,.45,.22,10),new THREE.MeshStandardMaterial({color:0x111111,roughness:1}));
-    wF.rotation.z=Math.PI/2; wF.position.set(sx*.95,.45,.9); g.add(wF);
+    const wb=new THREE.Mesh(new THREE.CylinderGeometry(.6,.6,.24,12),new THREE.MeshStandardMaterial({color:0x111111,roughness:1}));
+    wb.rotation.z=Math.PI/2; wb.position.set(sx*.88,.6,-.7); g.add(wb);
+    const wf=new THREE.Mesh(new THREE.CylinderGeometry(.38,.38,.2,10),new THREE.MeshStandardMaterial({color:0x111111,roughness:1}));
+    wf.rotation.z=Math.PI/2; wf.position.set(sx*.88,.38,.8); g.add(wf);
   });
   return g;
 }
 
-function buildPrancha(color){
-  const g=new THREE.Group();
-  const cab=new THREE.Mesh(new THREE.BoxGeometry(2.4,2.2,2.2),new THREE.MeshStandardMaterial({color:0x220044,roughness:.6,metalness:.4}));
-  cab.position.set(0,1.6,-4); g.add(cab);
-  const plat=new THREE.Mesh(new THREE.BoxGeometry(2.4,.3,8),new THREE.MeshStandardMaterial({color,roughness:.8,metalness:.2}));
-  plat.position.set(0,.9,0); g.add(plat);
-  // colhedora em cima da prancha (pequena)
-  const mini=buildColhedora(0x00aa55);
-  mini.scale.set(.55,.55,.55);
-  mini.position.set(0,1.2,.5);
-  g.add(mini);
-  [-1,1].forEach(sx=>[-3,-1,1,3].forEach(sz=>{
-    const w=new THREE.Mesh(new THREE.CylinderGeometry(.55,.55,.28,10),new THREE.MeshStandardMaterial({color:0x111111,roughness:1}));
-    w.rotation.z=Math.PI/2; w.position.set(sx*1.3,.55,sz); g.add(w);
-  }));
-  return g;
+// ── LUZ DE STATUS (esfera pulsante em cima) ───────────────────────────────────
+function addStatusLight(group, status){
+  if(status==='op') return null; // operando não tem luz parada
+  const col = status==='mn' ? 0xff9933 : 0xff2222;
+  const geo = new THREE.SphereGeometry(.18,8,8);
+  const mat = new THREE.MeshBasicMaterial({color:col,transparent:true,opacity:1});
+  const light = new THREE.Mesh(geo,mat);
+  light.position.set(0,4.5,0);
+  light.userData.blinkCol=col;
+  group.add(light);
+  return light;
 }
 
-function buildComboio(color){
-  const g=new THREE.Group();
-  const cab=new THREE.Mesh(new THREE.BoxGeometry(2,2,2),new THREE.MeshStandardMaterial({color:0x220000,roughness:.6,metalness:.4}));
-  cab.position.set(0,1.5,-2); g.add(cab);
-  const tank=new THREE.Mesh(new THREE.CylinderGeometry(.8,.8,4,16),new THREE.MeshStandardMaterial({color,roughness:.5,metalness:.6}));
-  tank.rotation.z=Math.PI/2; tank.position.set(0,1.6,1.5); g.add(tank);
-  const band=new THREE.Mesh(new THREE.CylinderGeometry(.82,.82,.2,16),new THREE.MeshStandardMaterial({color:0x330000,roughness:.6}));
-  band.rotation.z=Math.PI/2;
-  [-1,1].forEach(x=>{const b=band.clone();b.position.set(x,1.6,1.5);g.add(b);});
-  [-1,1].forEach(sx=>[-2.5,0,2].forEach(sz=>{
-    const w=new THREE.Mesh(new THREE.CylinderGeometry(.55,.55,.28,10),new THREE.MeshStandardMaterial({color:0x111111,roughness:1}));
-    w.rotation.z=Math.PI/2; w.position.set(sx*1.1,.55,sz); g.add(w);
-  }));
-  return g;
-}
+// ── POSIÇÕES DOS QUADRANTES ────────────────────────────────────────────────────
+// Q1: colhedoras — esquerda/cima   (x: -33 a -3, z: -23 a -3)
+// Q2: transbordos+tratores — direita/cima (x: 3 a 33, z: -23 a -3)
+// Q3: caminhões+prancha — esquerda/baixo (x: -33 a -3, z: 3 a 23)
+// Q4: comboio+apoio — direita/baixo (x: 3 a 33, z: 3 a 23)
 
-// ── INSTANCIAR MÁQUINAS ────────────────────────────────────────────────────
-const machines=[];
+const qPositions = {
+  col: (qi) => ({ x: -28 + (qi%3)*8,  z: -18 + Math.floor(qi/3)*7 }),
+  trb: (qi) => ({ x:   6 + (qi%2)*10, z: -18 + Math.floor(qi/2)*7 }),
+  trt: (qi) => ({ x:  26 + qi*6,      z: -8  }),
+  cam: (qi) => ({ x: -28 + (qi%2)*10, z:   6 + Math.floor(qi/2)*8 }),
+  prn: (qi) => ({ x: -10 + qi*8,      z:  18 }),
+  cmb: (qi) => ({ x:   6 + qi*10,     z:   8 + qi*6 }),
+};
 
-function addMachine(builder,color,data,x,z,angle,speed,path){
-  const m=builder(color);
-  m.rotation.y=angle;
-  m.position.set(x,0,z);
-  m.userData={...data, speed, path, pathIdx:0, t:Math.random()*100};
-  scene.add(m);
-  machines.push(m);
-  return m;
-}
+// cor base por tipo
+const baseColors = {col:0x00aa55, trb:0xbb9900, cam:0xcc6600, prn:0x7722aa, cmb:0xcc2222, trt:0x1155aa};
+const builders   = {col:buildColhedora, trb:buildTransbordo, cam:buildCaminhao, prn:buildPrancha, cmb:buildComboio, trt:buildTrator};
 
-// paths circulares/lineares para cada tipo
-const pathsCol=[
-  [{x:-20,z:-10},{x:20,z:-10}],
-  [{x:-20,z:-5}, {x:20,z:-5}],
-  [{x:-20,z:0},  {x:20,z:0}],
-  [{x:-20,z:5},  {x:20,z:5}],
-  null,
-  [{x:-20,z:10}, {x:20,z:10}],
-];
+const meshGroups=[]; // {group, data, light, phase}
+const allMeshes=[];
 
-// colhedoras
-const colData=[
-  FROTA[0],FROTA[1],FROTA[2],FROTA[3],FROTA[4],FROTA[5]
-];
-const colColors=[0x00ff88,0x00ff88,0x00ff88,0x00ff88,0x334433,0x00ff88];
-const colX=[-18,-12,-6,0,6,12];
-const colZ=[-10,-5,0,5,-8,10];
-colData.forEach((d,i)=>{
-  const spd = d.status==='Operando'?0.008:0;
-  addMachine(buildColhedora,colColors[i],d,colX[i],colZ[i],0,spd,pathsCol[i]);
+FROTA.forEach(m=>{
+  const pos = qPositions[m.tipo](m.qi);
+  const col = m.status==='qb' ? 0x223322 : (m.status==='mn' ? 0x332211 : baseColors[m.tipo]);
+  const grp = builders[m.tipo](col);
+  grp.position.set(pos.x, 0, pos.z);
+  grp.userData = m;
+  scene.add(grp);
+
+  const light = addStatusLight(grp, m.status);
+  const phase = Math.random()*Math.PI*2;
+  meshGroups.push({group:grp, data:m, light, phase});
+
+  // coletar meshes para raycaster
+  grp.traverse(c=>{ if(c.isMesh){ c.userData._grp=grp; allMeshes.push(c); } });
+
+  // Box do piso (slot)
+  const slotCol = m.status==='op' ? 0x041208 : (m.status==='mn' ? 0x120a00 : 0x0f0000);
+  const slot=new THREE.Mesh(
+    new THREE.PlaneGeometry(5.5,7),
+    new THREE.MeshStandardMaterial({color:slotCol,roughness:1})
+  );
+  slot.rotation.x=-Math.PI/2;
+  slot.position.set(pos.x,.01,pos.z);
+  scene.add(slot);
+
+  // bordas do slot
+  const bmat=new THREE.LineBasicMaterial({color: m.status==='op'?0x00ff88:(m.status==='mn'?0xff9933:0xff4444)});
+  const bpts=[
+    new THREE.Vector3(-2.75,0.02,-3.5),new THREE.Vector3(2.75,0.02,-3.5),
+    new THREE.Vector3(2.75,0.02,3.5),new THREE.Vector3(-2.75,0.02,3.5),
+    new THREE.Vector3(-2.75,0.02,-3.5)
+  ].map(v=>new THREE.Vector3(v.x+pos.x,v.y,v.z+pos.z));
+  const bgeo=new THREE.BufferGeometry().setFromPoints(bpts);
+  scene.add(new THREE.Line(bgeo,bmat));
 });
 
-// transbordos
-const trbPaths=[
-  [{x:-10,z:-10},{x:10,z:-10},{x:10,z:0},{x:-10,z:0}],
-  [{x:-10,z:5},{x:10,z:5},{x:10,z:15},{x:-10,z:15}],
-  [{x:0,z:-15},{x:0,z:15}],
-  null,
-];
-[FROTA[6],FROTA[7],FROTA[8],FROTA[9]].forEach((d,i)=>{
-  const spd=d.status==='Operando'?0.01:0;
-  addMachine(buildTransbordo,d.status==='Operando'?0xffe066:0x334433,d,-8+i*5,8,Math.PI/4,spd,trbPaths[i]);
-});
-
-// caminhões
-const camPaths=[
-  [{x:-35,z:0},{x:35,z:0}],
-  [{x:35,z:-15},{x:-35,z:-15}],
-  [{x:-35,z:15},{x:35,z:15}],
-  null,
-];
-[FROTA[10],FROTA[11],FROTA[12],FROTA[13]].forEach((d,i)=>{
-  const spd=d.status==='Operando'?0.018:0;
-  addMachine(buildCaminhao,d.status==='Operando'?0xff9933:0x334433,d,-30+i*8,i%2===0?0:-15,Math.PI/2,spd,camPaths[i]);
-});
-
-// tratores
-addMachine(buildTrator,0x44aaff,FROTA[14],15,-20,Math.PI*.6,0.009,[{x:5,z:-20},{x:25,z:-20},{x:25,z:-10}]);
-addMachine(buildTrator,0x44aaff,FROTA[15],-15,20,Math.PI*.2,0.009,[{x:-25,z:20},{x:-5,z:20},{x:-5,z:10}]);
-
-// prancha
-addMachine(buildPrancha,0xcc44ff,FROTA[16],-30,-30,Math.PI/2,0.012,[{x:-35,z:-30},{x:35,z:-30}]);
-
-// comboio
-addMachine(buildComboio,0xff4444,FROTA[17],25,25,Math.PI,0.01,[{x:35,z:25},{x:-35,z:25},{x:-35,z:-25},{x:35,z:-25}]);
-
-// ── POEIRA / PARTÍCULAS nas colhedoras ──────────────────────────────────────
-const dustParticles=[];
-function createDust(x,z){
-  const geo=new THREE.SphereGeometry(.1,4,4);
-  const mat=new THREE.MeshBasicMaterial({color:0x8b7355,transparent:true,opacity:.4});
-  const p=new THREE.Mesh(geo,mat);
-  p.position.set(x+(Math.random()-.5)*.5, Math.random()*1.5, z+(Math.random()-.5)*.5);
-  p.userData={life:1,vy:.02};
-  scene.add(p);
-  dustParticles.push(p);
-}
-
-// ── ORBIT CONTROLS ──────────────────────────────────────────────────────────
-let drag=false,lx=0,ly=0,theta=.3,phi=.75,radius=24;
+// ── ORBIT CONTROLS ────────────────────────────────────────────────────────────
+let drag=false,lx=0,ly=0,theta=.25,phi=.72,radius=28;
 const tgt=new THREE.Vector3(0,0,0);
 function upCam(){
   camera.position.x=tgt.x+radius*Math.sin(phi)*Math.sin(theta);
@@ -517,17 +477,19 @@ canvas.addEventListener('mousedown',e=>{drag=true;lx=e.clientX;ly=e.clientY;});
 window.addEventListener('mouseup',()=>drag=false);
 window.addEventListener('mousemove',e=>{
   if(!drag)return;
-  theta-=(e.clientX-lx)*.005; phi=Math.max(.15,Math.min(1.4,phi+(e.clientY-ly)*.005));
+  theta-=(e.clientX-lx)*.004;
+  phi=Math.max(.15,Math.min(1.35,phi+(e.clientY-ly)*.004));
   lx=e.clientX;ly=e.clientY;upCam();
 });
-canvas.addEventListener('wheel',e=>{radius=Math.max(8,Math.min(60,radius+e.deltaY*.05));upCam();e.preventDefault();},{passive:false});
+canvas.addEventListener('wheel',e=>{
+  radius=Math.max(10,Math.min(55,radius+e.deltaY*.04));
+  upCam();e.preventDefault();
+},{passive:false});
 
-// ── RAYCASTER ───────────────────────────────────────────────────────────────
-const rc=new THREE.Raycaster(), mouse=new THREE.Vector2();
+// ── TOOLTIP / RAYCASTER ───────────────────────────────────────────────────────
+const rc=new THREE.Raycaster();
+const mouse=new THREE.Vector2();
 const tt=document.getElementById('tt');
-let hovM=null;
-const allMeshes=[];
-machines.forEach(m=>m.traverse(c=>{if(c.isMesh){c.userData._machine=m;allMeshes.push(c);}}) );
 
 canvas.addEventListener('mousemove',e=>{
   const rect=canvas.getBoundingClientRect();
@@ -536,19 +498,18 @@ canvas.addEventListener('mousemove',e=>{
   rc.setFromCamera(mouse,camera);
   const hits=rc.intersectObjects(allMeshes);
   if(hits.length>0){
-    const m=hits[0].object.userData._machine;
-    if(m){
-      const d=m.userData;
-      document.getElementById('tt-name').textContent=d.name+' · '+d.id;
-      document.getElementById('tt-tipo').textContent=d.tipo;
+    const g=hits[0].object.userData._grp;
+    if(g){
+      const d=g.userData;
+      document.getElementById('tt-nm').textContent=d.nome+' · '+d.id;
       document.getElementById('tt-id').textContent=d.id;
       document.getElementById('tt-op').textContent=d.op;
-      document.getElementById('tt-st').textContent=d.status;
-      document.getElementById('tt-vel').textContent=d.vel;
-      document.getElementById('tt-hrs').textContent=d.hrs;
+      document.getElementById('tt-st').textContent=slbl[d.status];
+      document.getElementById('tt-hr').textContent=d.hrs;
+      document.getElementById('tt-ob').textContent=d.obs;
       tt.style.display='block';
       tt.style.left=(e.clientX-rect.left+16)+'px';
-      tt.style.top=(e.clientY-rect.top-30)+'px';
+      tt.style.top=(e.clientY-rect.top-20)+'px';
     }
   } else {
     tt.style.display='none';
@@ -556,28 +517,7 @@ canvas.addEventListener('mousemove',e=>{
 });
 canvas.addEventListener('mouseleave',()=>tt.style.display='none');
 
-// ── MOVIMENTAÇÃO ─────────────────────────────────────────────────────────────
-function moveMachine(m, dt){
-  const d=m.userData;
-  if(!d.speed||!d.path||d.path.length<2) return;
-  d.t = (d.t||0)+d.speed;
-  const total=d.path.length;
-  const seg=Math.floor(d.t)%total;
-  const frac=d.t%1;
-  const A=d.path[seg];
-  const B=d.path[(seg+1)%total];
-  m.position.x=A.x+(B.x-A.x)*frac;
-  m.position.z=A.z+(B.z-A.z)*frac;
-  // rotate toward direction
-  const dx=B.x-A.x, dz=B.z-A.z;
-  if(Math.abs(dx)+Math.abs(dz)>.01) m.rotation.y=Math.atan2(dx,dz);
-  // dust for colhedoras
-  if(d.tipo==='colhedora' && Math.random()<.1){
-    createDust(m.position.x, m.position.z);
-  }
-}
-
-// ── RESIZE ───────────────────────────────────────────────────────────────────
+// ── RESIZE ────────────────────────────────────────────────────────────────────
 function resize(){
   const w=wrap.clientWidth,h=wrap.clientHeight;
   renderer.setSize(w,h);
@@ -587,23 +527,32 @@ function resize(){
 resize();
 window.addEventListener('resize',resize);
 
-// ── ANIMATE ──────────────────────────────────────────────────────────────────
-let last=performance.now();
+// ── ANIMATE ───────────────────────────────────────────────────────────────────
+let t=0;
 function animate(){
   requestAnimationFrame(animate);
-  const now=performance.now(), dt=(now-last)/1000; last=now;
-  machines.forEach(m=>moveMachine(m,dt));
-  // update dust
-  for(let i=dustParticles.length-1;i>=0;i--){
-    const p=dustParticles[i];
-    p.position.y+=p.userData.vy;
-    p.userData.life-=dt*.8;
-    p.material.opacity=p.userData.life*.4;
-    if(p.userData.life<=0){scene.remove(p);dustParticles.splice(i,1);}
-  }
+  t+=0.008; // velocidade geral — bem devagar
+
+  meshGroups.forEach(({group,data,light,phase})=>{
+    if(data.status==='op'){
+      // movimento suave vaivém no eixo Z (pra frente e pra trás)
+      const amp = data.tipo==='cam'||data.tipo==='prn' ? 1.2 : 0.6;
+      const spd = data.tipo==='cam' ? 0.6 : 0.4;
+      group.position.z = qPositions[data.tipo](data.qi).z + Math.sin(t*spd+phase)*amp;
+    }
+    // pisca luz de manutenção/quebrado
+    if(light){
+      const pulse = (Math.sin(t*3+phase)+1)/2;
+      light.material.opacity = 0.3+pulse*0.7;
+      light.scale.setScalar(0.8+pulse*0.4);
+    }
+  });
+
   renderer.render(scene,camera);
 }
 animate();
+
+const slbl={op:'Operando',mn:'Manutenção',qb:'Quebrado no campo'};
 </script>
 </body>
 </html>
