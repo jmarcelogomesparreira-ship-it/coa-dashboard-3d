@@ -261,7 +261,7 @@ renderer.shadowMap.enabled = true;
 const scene  = new THREE.Scene();
 scene.fog    = new THREE.Fog(0x050d0a, 40, 80);
 const camera = new THREE.PerspectiveCamera(50,1,0.1,500);
-camera.position.set(0,22,30);
+camera.position.set(0,14,22);
 camera.lookAt(0,0,0);
 
 // lights
@@ -453,7 +453,7 @@ const colColors=[0x00ff88,0x00ff88,0x00ff88,0x00ff88,0x334433,0x00ff88];
 const colX=[-18,-12,-6,0,6,12];
 const colZ=[-10,-5,0,5,-8,10];
 colData.forEach((d,i)=>{
-  const spd = d.status==='Operando'?0.04:0;
+  const spd = d.status==='Operando'?0.008:0;
   addMachine(buildColhedora,colColors[i],d,colX[i],colZ[i],0,spd,pathsCol[i]);
 });
 
@@ -465,7 +465,7 @@ const trbPaths=[
   null,
 ];
 [FROTA[6],FROTA[7],FROTA[8],FROTA[9]].forEach((d,i)=>{
-  const spd=d.status==='Operando'?0.06:0;
+  const spd=d.status==='Operando'?0.01:0;
   addMachine(buildTransbordo,d.status==='Operando'?0xffe066:0x334433,d,-8+i*5,8,Math.PI/4,spd,trbPaths[i]);
 });
 
@@ -477,19 +477,19 @@ const camPaths=[
   null,
 ];
 [FROTA[10],FROTA[11],FROTA[12],FROTA[13]].forEach((d,i)=>{
-  const spd=d.status==='Operando'?0.12:0;
+  const spd=d.status==='Operando'?0.018:0;
   addMachine(buildCaminhao,d.status==='Operando'?0xff9933:0x334433,d,-30+i*8,i%2===0?0:-15,Math.PI/2,spd,camPaths[i]);
 });
 
 // tratores
-addMachine(buildTrator,0x44aaff,FROTA[14],15,-20,Math.PI*.6,0.05,[{x:5,z:-20},{x:25,z:-20},{x:25,z:-10}]);
-addMachine(buildTrator,0x44aaff,FROTA[15],-15,20,Math.PI*.2,0.05,[{x:-25,z:20},{x:-5,z:20},{x:-5,z:10}]);
+addMachine(buildTrator,0x44aaff,FROTA[14],15,-20,Math.PI*.6,0.009,[{x:5,z:-20},{x:25,z:-20},{x:25,z:-10}]);
+addMachine(buildTrator,0x44aaff,FROTA[15],-15,20,Math.PI*.2,0.009,[{x:-25,z:20},{x:-5,z:20},{x:-5,z:10}]);
 
 // prancha
-addMachine(buildPrancha,0xcc44ff,FROTA[16],-30,-30,Math.PI/2,0.08,[{x:-35,z:-30},{x:35,z:-30}]);
+addMachine(buildPrancha,0xcc44ff,FROTA[16],-30,-30,Math.PI/2,0.012,[{x:-35,z:-30},{x:35,z:-30}]);
 
 // comboio
-addMachine(buildComboio,0xff4444,FROTA[17],25,25,Math.PI,0.07,[{x:35,z:25},{x:-35,z:25},{x:-35,z:-25},{x:35,z:-25}]);
+addMachine(buildComboio,0xff4444,FROTA[17],25,25,Math.PI,0.01,[{x:35,z:25},{x:-35,z:25},{x:-35,z:-25},{x:35,z:-25}]);
 
 // ── POEIRA / PARTÍCULAS nas colhedoras ──────────────────────────────────────
 const dustParticles=[];
@@ -504,7 +504,7 @@ function createDust(x,z){
 }
 
 // ── ORBIT CONTROLS ──────────────────────────────────────────────────────────
-let drag=false,lx=0,ly=0,theta=.3,phi=.85,radius=32;
+let drag=false,lx=0,ly=0,theta=.3,phi=.75,radius=24;
 const tgt=new THREE.Vector3(0,0,0);
 function upCam(){
   camera.position.x=tgt.x+radius*Math.sin(phi)*Math.sin(theta);
